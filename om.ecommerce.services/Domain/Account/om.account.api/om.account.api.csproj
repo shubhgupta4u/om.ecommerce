@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>3763e5a2-57b9-45b5-8c10-6db2de30369a</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\om.dataaccesslayer\om.shared.dataaccesslayer.csproj" />
+    <ProjectReference Include="..\..\..\Shared\om.shared.security\om.shared.security.csproj" />
+    <ProjectReference Include="..\om.account.businesslogic\om.account.businesslogic.csproj" />
+    <ProjectReference Include="..\om.account.repository\om.account.repository.csproj" />
+  </ItemGroup>
+
+</Project>

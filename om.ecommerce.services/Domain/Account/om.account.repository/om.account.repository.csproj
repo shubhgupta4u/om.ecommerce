@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\om.dataaccesslayer\om.shared.dataaccesslayer.csproj" />
+    <ProjectReference Include="..\om.account.model\om.account.model.csproj" />
+  </ItemGroup>
+
+</Project>
