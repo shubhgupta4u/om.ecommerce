@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/om-ecommerce-webui'),
+      dir: require('path').join(__dirname, '../../coverage/om-ecommerce-admin-app'),
       subdir: '.',
       reporters: [
         { type: 'html' },
