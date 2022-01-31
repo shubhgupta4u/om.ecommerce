@@ -1,16 +1,34 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { NgxAccountLibraryComponent } from './ngx-account-library.component';
-
-
+import { LoginComponent } from './components/login/login.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { NgxAccountLibraryRoutingModule } from './ngx-account-library-routing.module';
+import { AccountModuleConfig } from './interfaces/ngx-account-module-config';
+import { ACCOUNT_MODULE_CONFIG_TOKEN, LogoutComponent, } from '../public-api';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
-    NgxAccountLibraryComponent
+    LoginComponent,
+    LogoutComponent
   ],
   imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    NgxAccountLibraryRoutingModule
   ],
   exports: [
-    NgxAccountLibraryComponent
+    LoginComponent,
+    LogoutComponent
   ]
 })
-export class NgxAccountLibraryModule { }
+export class NgxAccountLibraryModule {
+  static forRoot(config: AccountModuleConfig): ModuleWithProviders<NgxAccountLibraryModule> {
+    return {
+      ngModule: NgxAccountLibraryModule,
+      providers: [{ provide: ACCOUNT_MODULE_CONFIG_TOKEN, useValue: config }],
+    }
+ }
+}

@@ -15,6 +15,9 @@ namespace om.ecommerce.security.api
 {
     public class Startup
     {
+        private const string ALLOW_SPECIFIC_ORIGINS = "_myAllowSpecificOrigins";
+        private const string ALLOW_ANY_ORIGINS = "_anyAllowOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -50,7 +53,28 @@ namespace om.ecommerce.security.api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "om.ecommerce.security.api", Version = "v1" });
             });
             services.AddHttpClient();
-            
+
+            string[] allowedOrigins = Configuration.GetSection("JwtSetting:AllowedOrigins").Get<string[]>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: ALLOW_ANY_ORIGINS,
+                                  builder =>
+                                  {
+                                      builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                                  });
+                if (allowedOrigins != null)
+                {
+                    options.AddPolicy(name: ALLOW_SPECIFIC_ORIGINS,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins(allowedOrigins)
+                                        .AllowAnyMethod()
+                                        .AllowAnyHeader()
+                                        .AllowCredentials();
+                                  });
+                }                
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,6 +90,14 @@ namespace om.ecommerce.security.api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            if (env.IsDevelopment())
+            {
+                app.UseCors(ALLOW_ANY_ORIGINS);
+            }
+            else
+            {
+                app.UseCors(ALLOW_SPECIFIC_ORIGINS);
+            }
 
             app.UseAuthentication();
             app.UseAuthorization();

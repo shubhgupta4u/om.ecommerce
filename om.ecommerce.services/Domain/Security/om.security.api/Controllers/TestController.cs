@@ -31,7 +31,6 @@ namespace om.security.api.Controllers
         [HttpGet("unsecure")]
         public IActionResult Unsecure()
         {
-
             string userId = this.GetLoggedInUserId<string>();
             return Ok(userId);
         }
