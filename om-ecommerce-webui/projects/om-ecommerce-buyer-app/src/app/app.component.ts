@@ -15,8 +15,8 @@ export class AppComponent  implements OnInit {
 
   }
 
-  ngOnInit() {
-    this.accountService.tokenResponse.subscribe((tokenRespone:TokenResponse)=>{
+  ngOnInit() {    
+    this.accountService.tokenResponse.subscribe((tokenRespone)=>{
       if(tokenRespone && tokenRespone !== undefined && tokenRespone.jwtToken){
         this.isLogin = true;
       }else{

@@ -20,4 +20,12 @@ export class LoginService {
         return response;
       }));
   } 
+  refresh(baseUri: string, endpoint: string, tokenResponse: TokenResponse) {
+    const headers = { 'content-type': 'application/json'}  
+    const body=JSON.stringify({"jwtToken":tokenResponse.jwtToken,"refreshToken":tokenResponse.refreshToken});
+    return this.http.post<TokenResponse>(`${baseUri}/${endpoint}`, body,{'headers':headers})
+      .pipe(map(response => {
+        return response;
+      }));
+  } 
 }

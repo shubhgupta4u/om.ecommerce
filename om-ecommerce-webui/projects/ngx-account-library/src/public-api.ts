@@ -5,11 +5,9 @@
 import { InjectionToken } from '@angular/core';
 import { AccountModuleConfig } from './lib/interfaces/ngx-account-module-config';
 
-// export * from './lib/ngx-account-library.service';
 export * from './lib/services/account-facade.service';
 export * from './lib/services/auth-guard.service';
 export * from './lib/services/jwt-interceptor.service';
-// export * from './lib/ngx-account-library.component';
 export * from './lib/ngx-account-library.module';
 
 export * from './lib/components/login/login.component';
