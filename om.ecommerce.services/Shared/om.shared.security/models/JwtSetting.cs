@@ -7,5 +7,5 @@
         public string Scope { get; set; }
         public int ExpireTime { get; set; }
         public int PreviousTokenValidDuration { get; set; }
-    }
+    }   
 }

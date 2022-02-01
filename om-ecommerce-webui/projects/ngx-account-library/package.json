@@ -4,7 +4,8 @@
   "peerDependencies": {
     "@angular/common": "^12.2.0",
     "@angular/core": "^12.2.0",
-    "jwt-decode": "^3.1.2"
+    "jwt-decode": "^3.1.2",
+    "@okta/okta-auth-js": "^6.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

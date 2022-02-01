@@ -8,9 +8,9 @@ export class LogoutService {
 
   constructor(private http: HttpClient) { }
 
-  logout(baseUri: string, endpoint: string) {
+  logout(uri: string) {
     const headers = { 'content-type': 'application/json'}  
     const body=JSON.stringify({});
-    return this.http.post(`${baseUri}/${endpoint}`, body,{'headers':headers}); 
+    return this.http.post(uri, body,{'headers':headers}); 
   }
 }

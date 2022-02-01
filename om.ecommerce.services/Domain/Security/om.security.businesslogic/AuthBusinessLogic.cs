@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -60,6 +61,28 @@ namespace om.security.businesslogic
             {
                 var contentJson = await httpResponseMessage.Content.ReadAsStringAsync();
                 response = JsonConvert.DeserializeObject<ValidateCredentialResponse>(contentJson);
+            }
+            return response;
+        }
+        public async Task<ValidateCredentialResponse> AuthenticateAsync(string bearer_token)
+        {
+            string email;
+            ValidateCredentialResponse response = new ValidateCredentialResponse();
+            response.ErrorCode = 401;
+            if (this.authService.ValidateOktaToken(bearer_token, out email))
+            {
+                string access_token = await this.GenerateTempTokenAsync(email);
+                this._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                var httpResponseMessage = await this._httpClient.GetAsync(string.Format("{0}?email={1}",this._accountApiEndPoints.FetchUserByEmail,email));
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    var contentJson = await httpResponseMessage.Content.ReadAsStringAsync();
+                    response.User = JsonConvert.DeserializeObject<User>(contentJson);
+                    if (response.User != null && !string.IsNullOrWhiteSpace(response.User.UserId))
+                    {
+                        response.ErrorCode = 0;
+                    }                   
+                }
             }
             return response;
         }
@@ -172,6 +195,30 @@ namespace om.security.businesslogic
             }
         }
 
+        private async Task<string> GenerateTempTokenAsync(string email)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenKey = Encoding.UTF8.GetBytes(this._jwtSetting.SecurityKey);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new System.Security.Claims.ClaimsIdentity
+                    (
+                        new Claim[]
+                        {
+                            new Claim(ClaimTypes.Name,email),
+                            new Claim(ClaimTypes.NameIdentifier,email),
+                            new Claim(ClaimTypes.Email,email)
+                        }
+                    ),
+                NotBefore = DateTime.Now,
+                Expires = DateTime.Now.AddMinutes(this._jwtSetting.ExpireTime),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var finalToken = tokenHandler.WriteToken(token);
+            await this.GenerateRefreshTokenAsync(email, finalToken, string.Empty);
+            return finalToken;
+        }
         #region IDisposable
         protected virtual void Dispose(bool disposing)
         {

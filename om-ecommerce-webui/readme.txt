@@ -33,3 +33,8 @@ Step to use builds and packages your code into a compressed file named using the
 	npm pack
 
 	npm install /path/to/dist/ngx-account-library-0.0.1.tgz
+
+
+npm package for okta SSO
+
+	npm install @okta/okta-auth-js

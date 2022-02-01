@@ -1,6 +1,6 @@
 <div class="card">
     <h4 class="card-header">Login</h4>
-    <div class="card-body">
+    <div class="card-body" *ngIf="showForm">
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
             <div class="form-group">
                 <label for="username">Username</label>
@@ -23,5 +23,11 @@
                 </button>
             </div>
         </form>
+    </div>
+    <div class="card-body" *ngIf="!showForm">
+        <button [disabled]="loading" class="btn btn-primary" (click)="onSubmit()">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Login
+        </button>
     </div>
 </div>

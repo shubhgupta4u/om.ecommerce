@@ -15,5 +15,6 @@ export * from './lib/components/logout/logout.component';
 
 
 export * from './lib/models/token-response'
+export * from './lib/interfaces/ngx-account-module-config'
 
 export const ACCOUNT_MODULE_CONFIG_TOKEN = new InjectionToken<AccountModuleConfig>('Account_Module_Config');

@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using om.account.businesslogic.Interfaces;
 using om.account.model;
+using om.shared.security;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace om.account.api.Controllers
-{    
+{
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase

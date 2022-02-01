@@ -9,5 +9,6 @@ namespace om.shared.security.Interfaces
         void RegisterAuthentication(IServiceCollection service);
         bool ValidateToken(string authToken, out IEnumerable<Claim> claims);
         bool ValidateToken(string authToken, string allowedRoles, out int errorCode);
+        bool ValidateOktaToken(string jwt, out string email);
     }
 }

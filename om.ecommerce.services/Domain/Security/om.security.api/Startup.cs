@@ -38,6 +38,8 @@ namespace om.ecommerce.security.api
                 options.Configuration = redisEndPoint;
             });
 
+            services.Configure<OktaSetting>(Configuration.GetSection("OktaSetting"));
+
             var jwtSetting = Configuration.GetSection("JwtSetting");
             services.Configure<JwtSetting>(jwtSetting);
             IAuthService authService = services.BuildServiceProvider(false).GetRequiredService<IAuthService>();

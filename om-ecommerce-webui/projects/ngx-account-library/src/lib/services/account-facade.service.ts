@@ -1,14 +1,15 @@
 import { Inject, Injectable, Injector, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ACCOUNT_MODULE_CONFIG_TOKEN, LogoutComponent } from '../../public-api';
-import { AccountModuleConfig } from '../interfaces/ngx-account-module-config';
+import { map, retry } from 'rxjs/operators';
+import { ACCOUNT_MODULE_CONFIG_TOKEN } from '../../public-api';
+import { AccountModuleConfig, AuthProvider } from '../interfaces/ngx-account-module-config';
 import { TokenRequest } from '../models/token-request';
 import { TokenResponse } from '../models/token-response';
 import { LoginService } from './login.service';
 import { LogoutService } from './logout.service';
 import jwt_decode from "jwt-decode";
+import { OktaAuthService } from './okta-auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,8 @@ export class AccountFacadeService {
 
   private _loginService: LoginService;
   private _logoutService: LogoutService;
+  private _oktaAuthService: OktaAuthService;
+
   private _accountModuleConfig: AccountModuleConfig;
   private refreshCallTimeout: any;
 
@@ -39,6 +42,14 @@ export class AccountFacadeService {
     }
     return this._logoutService;
   }
+
+  public get oktaAuthService(): OktaAuthService {
+    if (!this._oktaAuthService) {
+      this._oktaAuthService = this.injector.get(OktaAuthService);
+    }
+    return this._oktaAuthService;
+  }
+
   constructor(private injector: Injector,
     private router: Router,
     @Optional() @Inject(ACCOUNT_MODULE_CONFIG_TOKEN)
@@ -62,38 +73,69 @@ export class AccountFacadeService {
     return this.tokenResponseSubject.value;
   }
 
-  login(username: string, password: string, returnUrl: string) {
+  webFormlogin(username: string, password: string, returnUrl: string) {
 
     var request = new TokenRequest();
     request.userName = username;
     request.password = password;
-    request.grantType = "password";
-    request.scope = "om.ecommerce";
+    request.grantType =AuthProvider.NativeWebForm;
+    return this.login(request, returnUrl);   
+  }
 
+  login(request:TokenRequest,returnUrl: string|null){
+    request.scope = this._accountModuleConfig.nativeAuthApiConfig.authScope;
     this.clearRefreshTokenCall();
     localStorage.removeItem(this.TOKEN_STORAGE_KEY);
     this.tokenResponseSubject.next(this.defaultTokenResponse);
 
-    return this.loginService.login(this._accountModuleConfig.baseSecuirtyApiUrl, this._accountModuleConfig.loginApiEndpoint, request)
+    return this.loginService.login(this._accountModuleConfig.nativeAuthApiConfig.loginUri, request)
       .pipe(map(response => {
         this.updateTokenWithJwtPayload(response);
         // store user details and jwt token in local storage to keep user logged in between page refreshes
         localStorage.setItem(this.TOKEN_STORAGE_KEY, JSON.stringify(response));
         this.tokenResponseSubject.next(response);
         this.registerRefreshTokenCall();
-        const newReturnUrl = returnUrl || this._accountModuleConfig.loginSuccessRoutePath || '/';
+        const newReturnUrl = returnUrl || this._accountModuleConfig.nativeAuthApiConfig.loginRedirectRoute || '/';
         this.router.navigateByUrl(newReturnUrl);
       }));
   }
 
+  oktaLogin(returnUrl:string){
+    this.oktaAuthService.login(returnUrl);
+  }
+
+  handleOktaAuthentication(){
+    return new Promise<boolean>((resolve, reject) =>{
+      this.oktaAuthService.handleAuthentication().then((token)=>{
+        if(token){
+         var request = new TokenRequest();
+         request.bearerToken = token;
+         request.grantType = AuthProvider.Okta;
+         this.login(request, null).subscribe(()=>{
+           resolve(true);
+         }); 
+        }else{
+          reject(false);
+        }
+      },(error)=>{
+        reject(error);
+      });
+    })
+    
+  }
+
+  oktaLogout(){
+    this.oktaAuthService.logout();
+  }
+
   logout(returnUrl: string) {
-    return this.logoutService.logout(this._accountModuleConfig.baseSecuirtyApiUrl, this._accountModuleConfig.logoutApiEndpoint)
+    return this.logoutService.logout(this._accountModuleConfig.nativeAuthApiConfig.logoutUri)
       .pipe(map(response => {
         this.clearRefreshTokenCall();
         // remove user from local storage and set current user to null
         localStorage.removeItem(this.TOKEN_STORAGE_KEY);
         this.tokenResponseSubject.next(this.defaultTokenResponse);
-        const newReturnUrl = returnUrl || this._accountModuleConfig.logoutSuccessRoutePath || '/';
+        const newReturnUrl = returnUrl || this._accountModuleConfig.nativeAuthApiConfig.logoutRedirectRoute || '/';
         this.router.navigateByUrl(newReturnUrl);
       }));
   }
@@ -101,7 +143,7 @@ export class AccountFacadeService {
   refresh(tokenRespone: TokenResponse) {
     this.clearRefreshTokenCall();
 
-    return this.loginService.refresh(this._accountModuleConfig.baseSecuirtyApiUrl, this._accountModuleConfig.refreshApiEndpoint, this.tokenResponseValue)
+    return this.loginService.refresh(this._accountModuleConfig.nativeAuthApiConfig.refreshUri, this.tokenResponseValue)
       .pipe(map(response => {
         this.updateTokenWithJwtPayload(response);
         // store user details and jwt token in local storage to keep user logged in between page refreshes

@@ -19,9 +19,17 @@ namespace om.security.api.Controllers
         [HttpPost("token")]
         public async Task<IActionResult> AuthenticateAsync([FromBody] TokenRequest tokenRequest)
         {
+            ValidateCredentialResponse validateCredResponse = null;
+            if(tokenRequest.GrantType == GrantType.Okta)
+            {
+                validateCredResponse = await this._businessLogic.AuthenticateAsync(tokenRequest.BearerToken);
+            }
+            else
+            {
+                validateCredResponse = await this._businessLogic.AuthenticateAsync(tokenRequest.UserName, tokenRequest.Password);
+            }
 
-            ValidateCredentialResponse validateCredResponse = await this._businessLogic.AuthenticateAsync(tokenRequest.UserName, tokenRequest.Password);
-            if (validateCredResponse.ErrorCode != 0)
+            if (validateCredResponse == null || validateCredResponse.ErrorCode != 0)
             {
                 return Unauthorized();
             }

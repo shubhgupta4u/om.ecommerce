@@ -12,18 +12,18 @@ export class LoginService {
   constructor(private http: HttpClient) {    
   }
  
-  login(baseUri: string, endpoint: string, tokenRequest: TokenRequest) {
+  login(uri: string, tokenRequest: TokenRequest) {
     const headers = { 'content-type': 'application/json'}  
     const body=JSON.stringify(tokenRequest);
-    return this.http.post<TokenResponse>(`${baseUri}/${endpoint}`, body,{'headers':headers})
+    return this.http.post<TokenResponse>(uri, body,{'headers':headers})
       .pipe(map(response => {
         return response;
       }));
   } 
-  refresh(baseUri: string, endpoint: string, tokenResponse: TokenResponse) {
+  refresh(uri: string, tokenResponse: TokenResponse) {
     const headers = { 'content-type': 'application/json'}  
     const body=JSON.stringify({"jwtToken":tokenResponse.jwtToken,"refreshToken":tokenResponse.refreshToken});
-    return this.http.post<TokenResponse>(`${baseUri}/${endpoint}`, body,{'headers':headers})
+    return this.http.post<TokenResponse>(uri, body,{'headers':headers})
       .pipe(map(response => {
         return response;
       }));

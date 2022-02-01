@@ -10,5 +10,6 @@ namespace om.security.models
     {
         public string BaseUri { get; set; }
         public string ValidateUserCredential { get; set; }
+        public string FetchUserByEmail { get; set; }
     }
 }
