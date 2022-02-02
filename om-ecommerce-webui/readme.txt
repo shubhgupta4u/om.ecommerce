@@ -41,4 +41,5 @@ npm package for okta SSO
 
 npm package for AzureAd SSO
 
+	npm i @azure/msal-browser
 	npm i @azure/msal-angular
