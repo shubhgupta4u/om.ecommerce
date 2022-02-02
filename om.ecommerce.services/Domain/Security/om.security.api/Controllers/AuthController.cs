@@ -22,7 +22,11 @@ namespace om.security.api.Controllers
             ValidateCredentialResponse validateCredResponse = null;
             if(tokenRequest.GrantType == GrantType.Okta)
             {
-                validateCredResponse = await this._businessLogic.AuthenticateAsync(tokenRequest.BearerToken);
+                validateCredResponse = await this._businessLogic.AuthenticateAsync(tokenRequest.BearerToken, GrantType.Okta);
+            }
+            else if (tokenRequest.GrantType == GrantType.AzureAD)
+            {
+                validateCredResponse = await this._businessLogic.AuthenticateAsync(tokenRequest.BearerToken, GrantType.AzureAD);
             }
             else
             {

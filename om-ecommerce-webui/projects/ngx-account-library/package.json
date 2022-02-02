@@ -5,6 +5,8 @@
     "@angular/common": "^12.2.0",
     "@angular/core": "^12.2.0",
     "jwt-decode": "^3.1.2",
+    "@azure/msal-angular": "^2.1.0",
+    "@azure/msal-browser": "^2.21.0",
     "@okta/okta-auth-js": "^6.0.0"
   },
   "dependencies": {

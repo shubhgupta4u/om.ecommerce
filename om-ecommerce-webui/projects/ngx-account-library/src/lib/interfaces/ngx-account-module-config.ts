@@ -7,7 +7,8 @@ export const enum AuthProvider {
 export interface AccountModuleConfig{
     readonly authProvider:AuthProvider;
     readonly oktaAuthConfig:OktaAuthConfig;
-    readonly nativeAuthApiConfig:NativeAuthApiConfig
+    readonly azureAdAuthConfig:AzureAdAuthConfig;
+    readonly nativeAuthApiConfig:NativeAuthApiConfig;
 }
 export interface NativeAuthApiConfig{
     readonly loginUri:string;
@@ -22,4 +23,11 @@ export interface OktaAuthConfig{
     readonly issuer:string;
     readonly logoutRedirectUri:string;
     readonly loginRedirectUri:string;
+}
+export interface AzureAdAuthConfig{
+    readonly clientId:string;
+    readonly tenantId:string
+    readonly scopes:string[]
+    readonly loginRedirectUri:string;
+    readonly logoutRedirectUri:string;
 }

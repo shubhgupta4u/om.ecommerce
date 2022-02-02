@@ -33,6 +33,13 @@ import { AppComponent } from './app.component';
         issuer:"https://dev-35555547.okta.com/oauth2/default",
         logoutRedirectUri:"http://localhost:4200/account/logout/callback",
         loginRedirectUri:"http://localhost:4200/account/login/callback",
+      },
+      azureAdAuthConfig:{
+        clientId:"77480444-3d6d-491b-8fa1-2c8a6911636b",
+        tenantId:"8515731b-0bbf-42e4-8600-3079fcf8fa41",
+        scopes:['api://77480444-3d6d-491b-8fa1-2c8a6911636b/Files.Read'],
+        loginRedirectUri:"http://localhost:4200/account/login",
+        logoutRedirectUri:"http://localhost:4200/account/logout/callback",
       }
     })
   ],

@@ -38,3 +38,7 @@ Step to use builds and packages your code into a compressed file named using the
 npm package for okta SSO
 
 	npm install @okta/okta-auth-js
+
+npm package for AzureAd SSO
+
+	npm i @azure/msal-angular

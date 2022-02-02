@@ -1,4 +1,4 @@
-import { Injector, ModuleWithProviders, NgModule } from '@angular/core';
+import {  ModuleWithProviders, NgModule } from '@angular/core';
 import { LoginComponent } from './components/login/login.component';
 import { LogoutComponent } from './components/logout/logout.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -7,6 +7,28 @@ import { NgxAccountLibraryRoutingModule } from './ngx-account-library-routing.mo
 import { AccountModuleConfig } from './interfaces/ngx-account-module-config';
 import { ACCOUNT_MODULE_CONFIG_TOKEN} from '../public-api';
 import { CommonModule } from '@angular/common';
+
+import { IPublicClientApplication, PublicClientApplication, Configuration } from '@azure/msal-browser';
+import { MsalGuard, MsalBroadcastService, MsalService, MSAL_INSTANCE } from '@azure/msal-angular';
+
+
+
+export const msalConfig: Configuration = {
+  auth: {
+    clientId: ''
+  }
+}
+
+
+/**
+ * Here we pass the configuration parameters to create an MSAL instance.
+ * For more info, visit: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-angular/docs/v2-docs/configuration.md
+ */
+
+export function MSALInstanceFactory(): IPublicClientApplication {
+  return new PublicClientApplication(msalConfig);
+}
+
 
 @NgModule({
   declarations: [
@@ -20,7 +42,13 @@ import { CommonModule } from '@angular/common';
     NgxAccountLibraryRoutingModule
   ],
   providers: [
-    
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: MSALInstanceFactory
+    },
+    MsalService,
+    MsalGuard,
+    MsalBroadcastService
   ],
   exports: [
     LoginComponent,

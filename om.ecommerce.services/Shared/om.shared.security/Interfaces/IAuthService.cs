@@ -10,5 +10,6 @@ namespace om.shared.security.Interfaces
         bool ValidateToken(string authToken, out IEnumerable<Claim> claims);
         bool ValidateToken(string authToken, string allowedRoles, out int errorCode);
         bool ValidateOktaToken(string jwt, out string email);
+        bool ValidateMsalToken(string jwt, out string email);
     }
 }

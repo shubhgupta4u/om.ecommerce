@@ -9,6 +9,7 @@ using om.shared.security.Interfaces;
 using om.shared.security.models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -20,12 +21,20 @@ namespace om.shared.security
     {
         private readonly JwtSetting _jwtSetting;
         private readonly OktaSetting _oktaSetting;
+        private readonly AzureAdSetting _azureAdSetting;
         private readonly IUserTokenRepository _userTokenRepository;
-        public AuthService(IOptions<JwtSetting> options, IOptions<OktaSetting> oktaSetting, IUserTokenRepository userTokenRepository)
+        public AuthService(IOptions<JwtSetting> options, IOptions<OktaSetting> oktaSetting, IOptions<AzureAdSetting> azureAdSetting, IUserTokenRepository userTokenRepository)
         {
             this._userTokenRepository = userTokenRepository;
             this._jwtSetting = options.Value;
-            this._oktaSetting = oktaSetting.Value;
+            if(oktaSetting != null && oktaSetting.Value != null)
+            {
+                this._oktaSetting = oktaSetting.Value;
+            }
+            if (azureAdSetting != null && azureAdSetting.Value != null)
+            {
+                this._azureAdSetting = azureAdSetting.Value;
+            }
         }
 
         public void RegisterAuthentication(IServiceCollection service)
@@ -45,15 +54,18 @@ namespace om.shared.security
         public bool ValidateOktaToken(string jwt, out string email)
         {
             bool isValid = false;
+            if (this._oktaSetting == null)
+            {
+                email = string.Empty;
+                return false;
+            }
             var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-                                                // .well-known/oauth-authorization-server or .well-known/openid-configuration
                                                 this._oktaSetting.OpenIdMetadataAddress,
                                                 new OpenIdConnectConfigurationRetriever(),
                                                 new HttpDocumentRetriever());
 
             var discoveryDocument = configurationManager.GetConfigurationAsync().Result;
             var signingKeys = discoveryDocument.SigningKeys;
-
             var validationParameters = new TokenValidationParameters
             {
                 // Clock skew compensates for server time drift.
@@ -64,7 +76,7 @@ namespace om.shared.security
                 RequireSignedTokens = true,
                 // Ensure the token hasn't expired:
                 RequireExpirationTime = true,
-                ValidateLifetime = true,
+                ValidateLifetime = false,
                 // Ensure the token audience matches our audience value (default true):
                 ValidateAudience = true,
                 ValidAudience = "api://default",//"0oa3rqwjeikxFYVOY5d7",
@@ -72,13 +84,15 @@ namespace om.shared.security
                 ValidateIssuer = true,
                 ValidIssuer = string.Format("https://{0}/oauth2/default", this._oktaSetting.OktaDomain)
             };
-            IdentityModelEventSource.ShowPII = true;
+            var tokenHandler = new JwtSecurityTokenHandler();   
+            //IdentityModelEventSource.ShowPII = true;
             try
             {
+                // Throws an Exception as the token is invalid (expired, invalid-formatted, etc.)  
                 var claimsPrincipal = new JwtSecurityTokenHandler()
-                    .ValidateToken(jwt, validationParameters, out var rawValidatedToken);
+                     .ValidateToken(jwt, validationParameters, out var rawValidatedToken);
 
-                var token= (JwtSecurityToken)rawValidatedToken;
+                var token = (JwtSecurityToken)rawValidatedToken;
                 email = token.Claims.FirstOrDefault(x => x.Type == "sub").Value;
                 isValid = true;
             }
@@ -92,7 +106,59 @@ namespace om.shared.security
             }
             return isValid;
         }
+        public bool ValidateMsalToken(string jwt, out string email)
+        {
+            bool isValid = false;
+            if (this._azureAdSetting == null)
+            {
+                email = string.Empty;
+                return false;
+            }
+            string myTenant = this._azureAdSetting.TenantId;
+            var myAudience = this._azureAdSetting.Audience;
+            var myIssuer = this._azureAdSetting.Issuer;
+            var mySecret = this._azureAdSetting.SecretKey;
+            var mySecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(mySecret));
+            var stsDiscoveryEndpoint = String.Format(CultureInfo.InvariantCulture, "https://login.microsoftonline.com/{0}/.well-known/openid-configuration", myTenant);
+            var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(stsDiscoveryEndpoint,
+                                                    new OpenIdConnectConfigurationRetriever(),
+                                                    new HttpDocumentRetriever());
 
+            var discoveryDocument = configurationManager.GetConfigurationAsync().Result;
+            var signingKeys = discoveryDocument.SigningKeys;
+            var validationParameters = new TokenValidationParameters
+            {
+                ClockSkew = TimeSpan.FromMinutes(5),
+                IssuerSigningKeys = signingKeys,
+                IssuerSigningKey = mySecurityKey,
+                RequireSignedTokens = true,
+                RequireExpirationTime = true,
+                ValidateLifetime = false,
+                ValidateAudience = true,
+                ValidAudience = myAudience,
+                ValidateIssuer = true,
+                ValidIssuer = myIssuer
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validatedToken = (SecurityToken)new JwtSecurityToken();
+            //IdentityModelEventSource.ShowPII = true;
+            try
+            {
+                // Throws an Exception as the token is invalid (expired, invalid-formatted, etc.)  
+                var claimsPrincipal = tokenHandler.ValidateToken(jwt, validationParameters, out validatedToken);
+                email = claimsPrincipal.Claims.FirstOrDefault(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
+                isValid = true;
+            }
+            catch (SecurityTokenValidationException ex)
+            {
+                email = string.Empty;
+            }
+            catch (ArgumentException ex)
+            {
+                email = string.Empty;
+            }
+            return isValid;
+        }
         public bool ValidateToken(string authToken, out IEnumerable<Claim> claims)
         {
             bool isValid = false;

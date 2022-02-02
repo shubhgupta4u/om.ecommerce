@@ -64,12 +64,13 @@ namespace om.security.businesslogic
             }
             return response;
         }
-        public async Task<ValidateCredentialResponse> AuthenticateAsync(string bearer_token)
+        public async Task<ValidateCredentialResponse> AuthenticateAsync(string bearer_token, GrantType grantType)
         {
             string email;
             ValidateCredentialResponse response = new ValidateCredentialResponse();
             response.ErrorCode = 401;
-            if (this.authService.ValidateOktaToken(bearer_token, out email))
+            if ((grantType == GrantType.Okta && this.authService.ValidateOktaToken(bearer_token, out email))
+                || (grantType == GrantType.AzureAD && this.authService.ValidateMsalToken(bearer_token, out email)))
             {
                 string access_token = await this.GenerateTempTokenAsync(email);
                 this._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);

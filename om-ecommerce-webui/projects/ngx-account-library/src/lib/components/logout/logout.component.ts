@@ -28,14 +28,20 @@ export class LogoutComponent implements OnInit {
     }
     else if(this._accountModuleConfig && this._accountModuleConfig.authProvider == AuthProvider.Okta){
       this.logoutOkta();
-    }   
+    }
+    else if(this._accountModuleConfig && this._accountModuleConfig.authProvider == AuthProvider.AzureAD){
+      this.logoutMsal();
+    }    
   }
 
   logoutOkta(){
     this.accountService.oktaLogout();
     this.logoutNativeWebform();
   }
-
+  logoutMsal(){
+    this.accountService.msalLogout();
+    this.logoutNativeWebform();
+  }
   logoutNativeWebform(){
     const returnUrl = this.route.snapshot.queryParams['returnUrl'];
     this.accountService.logout(returnUrl).subscribe(()=>{

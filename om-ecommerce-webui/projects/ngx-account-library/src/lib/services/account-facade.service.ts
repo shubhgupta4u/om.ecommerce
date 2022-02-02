@@ -10,6 +10,8 @@ import { LoginService } from './login.service';
 import { LogoutService } from './logout.service';
 import jwt_decode from "jwt-decode";
 import { OktaAuthService } from './okta-auth.service';
+import { MsalAuthService } from './msal-auth.service';
+import { AuthenticationResult } from '@azure/msal-browser';
 
 @Injectable({
   providedIn: 'root'
@@ -26,9 +28,17 @@ export class AccountFacadeService {
   private _loginService: LoginService;
   private _logoutService: LogoutService;
   private _oktaAuthService: OktaAuthService;
+  private _msalAuthService: MsalAuthService;
 
   private _accountModuleConfig: AccountModuleConfig;
   private refreshCallTimeout: any;
+
+  public get msalAuthService(): MsalAuthService {
+    if (!this._msalAuthService) {
+      this._msalAuthService = this.injector.get(MsalAuthService);
+    }
+    return this._msalAuthService;
+  }
 
   public get loginService(): LoginService {
     if (!this._loginService) {
@@ -58,6 +68,18 @@ export class AccountFacadeService {
 
     if (config != null) {
       this._accountModuleConfig = config;
+
+      if (this._accountModuleConfig.authProvider == AuthProvider.AzureAD) {
+        if (this.msalAuthService.isAuthenticated()) {
+          this.handleMsalAuthentication();
+        } else {
+          this.msalAuthService.authenticationResult$.subscribe((authResult) => {
+            if (authResult && authResult.accessToken) {
+              this.handleMsalAuthentication();
+            }
+          })
+        }
+      }
     }
     var tokenResponse = localStorage.getItem(this.TOKEN_STORAGE_KEY)
     if (tokenResponse) {
@@ -78,11 +100,11 @@ export class AccountFacadeService {
     var request = new TokenRequest();
     request.userName = username;
     request.password = password;
-    request.grantType =AuthProvider.NativeWebForm;
-    return this.login(request, returnUrl);   
+    request.grantType = AuthProvider.NativeWebForm;
+    return this.login(request, returnUrl);
   }
 
-  login(request:TokenRequest,returnUrl: string|null){
+  login(request: TokenRequest, returnUrl: string | null) {
     request.scope = this._accountModuleConfig.nativeAuthApiConfig.authScope;
     this.clearRefreshTokenCall();
     localStorage.removeItem(this.TOKEN_STORAGE_KEY);
@@ -99,32 +121,55 @@ export class AccountFacadeService {
         this.router.navigateByUrl(newReturnUrl);
       }));
   }
-
-  oktaLogin(returnUrl:string){
+  msalLogin() {
+    this.msalAuthService.login();
+  }
+  oktaLogin(returnUrl: string) {
     this.oktaAuthService.login(returnUrl);
   }
 
-  handleOktaAuthentication(){
-    return new Promise<boolean>((resolve, reject) =>{
-      this.oktaAuthService.handleAuthentication().then((token)=>{
-        if(token){
-         var request = new TokenRequest();
-         request.bearerToken = token;
-         request.grantType = AuthProvider.Okta;
-         this.login(request, null).subscribe(()=>{
-           resolve(true);
-         }); 
-        }else{
+  handleOktaAuthentication() {
+    return new Promise<boolean>((resolve, reject) => {
+      this.oktaAuthService.handleAuthentication().then((token) => {
+        if (token) {
+          var request = new TokenRequest();
+          request.bearerToken = token;
+          request.grantType = AuthProvider.Okta;
+          this.login(request, null).subscribe(() => {
+            resolve(true);
+          }, err => {
+            reject(false);
+          });
+        } else {
           reject(false);
         }
-      },(error)=>{
+      }, (error) => {
         reject(error);
       });
     })
-    
-  }
 
-  oktaLogout(){
+  }
+  handleMsalAuthentication() {
+    return new Promise<boolean>((resolve, reject) => {
+      var accessToken = this.msalAuthService.getAccessToken();
+      if (accessToken) {
+        var request = new TokenRequest();
+        request.bearerToken = accessToken;
+        request.grantType = AuthProvider.AzureAD;
+        this.login(request, null).subscribe(() => {
+          resolve(true)
+        }, err => {
+          reject(false);
+        });
+      } else {
+        reject(false);
+      }
+    });
+  }
+  msalLogout() {
+    this.msalAuthService.logout();
+  }
+  oktaLogout() {
     this.oktaAuthService.logout();
   }
 
@@ -148,7 +193,7 @@ export class AccountFacadeService {
         this.updateTokenWithJwtPayload(response);
         // store user details and jwt token in local storage to keep user logged in between page refreshes
         localStorage.setItem(this.TOKEN_STORAGE_KEY, JSON.stringify(response));
-        this.tokenResponseSubject.next(response);       
+        this.tokenResponseSubject.next(response);
       }));
   }
 
@@ -169,19 +214,19 @@ export class AccountFacadeService {
 
   registerRefreshTokenCall() {
     var tokenRespone = this.tokenResponseValue;
-    if(tokenRespone){
+    if (tokenRespone) {
       var diff = Math.abs((new Date()).getTime() - tokenRespone.expiry.getTime());
-      var diffInMin = Math.ceil(diff / (1000 * 60)); 
+      var diffInMin = Math.ceil(diff / (1000 * 60));
       var timeoutMilliSec = (diffInMin - this.REFRESH_TOKEN_DELAY) * 60 * 1000;
       this.refreshCallTimeout = setTimeout(() => {
         var tokenRespone = this.tokenResponseValue;
         if (tokenRespone && tokenRespone.refreshToken && tokenRespone.jwtToken) {
-          this.refresh(tokenRespone).subscribe(()=>{
+          this.refresh(tokenRespone).subscribe(() => {
             this.registerRefreshTokenCall();
           });
         }
       }, timeoutMilliSec); //call refresh token 2 min before token expiry
-    }   
+    }
   }
 
   clearRefreshTokenCall() {
