@@ -1,0 +1,24 @@
+{
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Error",
+        "System": "Warning"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "MongoDBBson",
+        "Args": {
+          //"databaseUrl": "mongodb://username:password@ip:port/dbName?authSource=admin",
+          "databaseUrl": "mongodb://localhost:27001/logs?readPreference=primary&directConnection=true&ssl=false",
+          "collectionName": "{ApplicationName}Log",
+          "cappedMaxSizeMb": "1024",
+          "cappedMaxDocuments": "50000"
+        }
+      }
+    ],
+    "Enrich": [ "WithProcessName", "WithMemoryUsage", "WithAssemblyName", "WithAssemblyVersion", "WithCorrelationId", "WithClientIp", "WithClientAgent", "FromLogContext", "WithMachineName", "WithProcessId", "WithThreadId" ]
+  }
+}

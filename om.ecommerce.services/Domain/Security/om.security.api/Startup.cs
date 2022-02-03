@@ -7,6 +7,8 @@ using Microsoft.OpenApi.Models;
 using om.security.businesslogic;
 using om.security.businesslogic.Interfaces;
 using om.security.models;
+using om.shared.api.middlewares;
+using om.shared.api.middlewares.Filters;
 using om.shared.security;
 using om.shared.security.Interfaces;
 using om.shared.security.models;
@@ -31,6 +33,14 @@ namespace om.ecommerce.security.api
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IAuthBusinessLogic, AuthBusinessLogic>();
             services.AddScoped<IUserTokenRepository, UserTokenRepository>();
+            services.AddSingleton<om.shared.logger.Interfaces.ILogger, om.shared.logger.Logger>();
+
+            var appInsightInstrumentationKey = Configuration.GetSection("LogSettings:AppInsightInstrumentationKey");
+            if (appInsightInstrumentationKey !=null)
+            {
+                services.AddApplicationInsightsTelemetry(appInsightInstrumentationKey.Value);
+            }
+            
 
             var redisEndPoint = Configuration.GetSection("RedisEndPoint").Value;
             services.AddStackExchangeRedisCache(options =>
@@ -40,14 +50,12 @@ namespace om.ecommerce.security.api
 
             services.Configure<OktaSetting>(Configuration.GetSection("OktaSetting")); 
             services.Configure<AzureAdSetting>(Configuration.GetSection("AzureAdSetting"));
-            var jwtSetting = Configuration.GetSection("JwtSetting");
-            services.Configure<JwtSetting>(jwtSetting);
+            services.Configure<JwtSetting>(Configuration.GetSection("JwtSetting"));
+            services.Configure<AccountApiEndPoints>(Configuration.GetSection("AccountApiEndPoints"));
+
             IAuthService authService = services.BuildServiceProvider(false).GetRequiredService<IAuthService>();
             authService.RegisterAuthentication(services);
             AuthorizeAttribute.RegisterAuthService(authService);
-
-            var accountApiEndPoints = Configuration.GetSection("AccountApiEndPoints");
-            services.Configure<AccountApiEndPoints>(accountApiEndPoints);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -76,6 +84,13 @@ namespace om.ecommerce.security.api
                                   });
                 }                
             });
+            services.AddMvc(
+                   option =>
+                   {
+                       option.EnableEndpointRouting = false;
+                       option.Filters.Add<ExceptionFilter>();
+                   }
+               );
 
         }
 
@@ -88,7 +103,9 @@ namespace om.ecommerce.security.api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "om.ecommerce.security.api v1"));
             }
-
+            app.UseMiddleware<LogContextEnrichment>();
+            app.UseLoggerMiddleware();
+            app.UseMiddleware<LogContextEnrichment>();
             app.UseHttpsRedirection();
 
             app.UseRouting();

@@ -1,0 +1,30 @@
+{
+  "Serilog": {
+    "Using": [
+      "Serilog.Sinks.AzureBlobStorage"
+    ],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Information"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "AzureBlobStorage",
+        "Args": {
+          "connectionString": "",
+          "storageContainerName": "om-ecommerce",
+          "storageFileName": "{ApplicationName}\\log.txt",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] --Application {Application} --Host {Host}, --Path {Path}, --Method {Method}, --ResponseCode {ResponseCode}, --RequestTime {RequestTime}, --User {UserName}, --UserId {UserId}, --ClientIp {ClientIp}, --UserAgent {UserAgent}, --CorrelationId {CorrelationId}, --AssemblyName {AssemblyName}, --AssemblyVersion {AssemblyVersion}, --MachineName {MachineName}, --ProcessName {ProcessName}, --ProcessId {ProcessId}, --ThreadId {ThreadId}, --MemoryUsage {MemoryUsage}{NewLine}{Message:lj}{NewLine}{NewLine}",
+          "formatter": "Serilog.Formatting.Display.MessageTemplateTextFormatter", //Serilog.Formatting.Json.JsonFormatter", //Serilog.Formatting.Compact.CompactJsonFormatter
+          "blobSizeLimitBytes": 5024,
+          "writeInBatches": "true", // mandatory
+          "period": "0.00:00:30", // mandatory sets the period to 30 secs
+          "batchPostingLimit": "50" // optional
+        }
+      }
+    ],
+    "Enrich": [ "WithProcessName", "WithMemoryUsage", "WithAssemblyName", "WithAssemblyVersion", "WithCorrelationId", "WithClientIp", "WithClientAgent", "FromLogContext", "WithMachineName", "WithProcessId", "WithThreadId" ]
+  }
+}

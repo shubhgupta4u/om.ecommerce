@@ -71,11 +71,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.stock.api", "Domain\Stoc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.stock.api.tests", "Domain\Stock\om.stock.api.tests\om.stock.api.tests.csproj", "{6F345BC1-44F9-4BDE-B44E-F3B0C039A960}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.security.businesslogic", "Domain\Security\om.security.businesslogic\om.security.businesslogic.csproj", "{7B928CCD-D305-4CFC-AE88-9CCAE8150F6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.security.businesslogic", "Domain\Security\om.security.businesslogic\om.security.businesslogic.csproj", "{7B928CCD-D305-4CFC-AE88-9CCAE8150F6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.security.models", "Domain\Security\om.security.models\om.security.models.csproj", "{5E55D056-6C7D-4360-807E-C4FFA4B086C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.security.models", "Domain\Security\om.security.models\om.security.models.csproj", "{5E55D056-6C7D-4360-807E-C4FFA4B086C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.shared.security", "Shared\om.shared.security\om.shared.security.csproj", "{B8ABDD9C-C093-4FEA-A5C9-1C70CF24B9F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.shared.security", "Shared\om.shared.security\om.shared.security.csproj", "{B8ABDD9C-C093-4FEA-A5C9-1C70CF24B9F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.shared.logger", "Shared\om.shared.logger\om.shared.logger.csproj", "{B37D06D1-95FE-47A7-B20E-C4DCB4746C27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.shared.api.middlewares", "Shared\om.shared.api.middlewares\om.shared.api.middlewares.csproj", "{84DB8324-3739-4CC9-999A-0B4017F0F6E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -167,6 +171,14 @@ Global
 		{B8ABDD9C-C093-4FEA-A5C9-1C70CF24B9F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8ABDD9C-C093-4FEA-A5C9-1C70CF24B9F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8ABDD9C-C093-4FEA-A5C9-1C70CF24B9F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B37D06D1-95FE-47A7-B20E-C4DCB4746C27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B37D06D1-95FE-47A7-B20E-C4DCB4746C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B37D06D1-95FE-47A7-B20E-C4DCB4746C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B37D06D1-95FE-47A7-B20E-C4DCB4746C27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84DB8324-3739-4CC9-999A-0B4017F0F6E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84DB8324-3739-4CC9-999A-0B4017F0F6E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84DB8324-3739-4CC9-999A-0B4017F0F6E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84DB8324-3739-4CC9-999A-0B4017F0F6E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -205,6 +217,8 @@ Global
 		{7B928CCD-D305-4CFC-AE88-9CCAE8150F6D} = {EABD88EA-A51D-4551-AA15-257A12912140}
 		{5E55D056-6C7D-4360-807E-C4FFA4B086C4} = {EABD88EA-A51D-4551-AA15-257A12912140}
 		{B8ABDD9C-C093-4FEA-A5C9-1C70CF24B9F0} = {4275C992-C388-42D1-B36E-E3D655913DCA}
+		{B37D06D1-95FE-47A7-B20E-C4DCB4746C27} = {4275C992-C388-42D1-B36E-E3D655913DCA}
+		{84DB8324-3739-4CC9-999A-0B4017F0F6E0} = {4275C992-C388-42D1-B36E-E3D655913DCA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8358D226-D15C-4081-AC0C-003980DB3AA7}

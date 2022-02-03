@@ -1,0 +1,25 @@
+{
+  "Serilog": {
+    "Using": [
+      "Serilog.Sinks.File"
+    ],
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    },
+    "Enrich": [ "WithProcessName", "WithMemoryUsage", "WithAssemblyName", "WithAssemblyVersion", "WithCorrelationId", "WithClientIp", "WithClientAgent", "FromLogContext", "WithMachineName", "WithProcessId", "WithThreadId" ],
+    "WriteTo": [
+      {
+        "Name": "File",
+        "Args": {
+          "path": "%APPDATA%\\Om.Ecommerce\\{ApplicationName}\\log.txt",
+          "rollingInterval": "Day",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] --Application {Application} --Host {Host}, --Path {Path}, --Method {Method}, --ResponseCode {ResponseCode}, --RequestTime {RequestTime}, --User {UserName}, --UserId {UserId}, --ClientIp {ClientIp}, --UserAgent {UserAgent}, --CorrelationId {CorrelationId}, --AssemblyName {AssemblyName}, --AssemblyVersion {AssemblyVersion}, --MachineName {MachineName}, --ProcessName {ProcessName}, --ProcessId {ProcessId}, --ThreadId {ThreadId}, --MemoryUsage {MemoryUsage}{NewLine}{Message:lj}{NewLine}{NewLine}"
+        }
+      }
+    ]
+  }
+}

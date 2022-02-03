@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using om.security.businesslogic.Interfaces;
 using om.security.models;
+using om.shared.logger.Interfaces;
 using om.shared.security;
 using System.Threading.Tasks;
 
@@ -11,9 +12,11 @@ namespace om.security.api.Controllers
     public class AuthController : ControllerBase
     {
         protected readonly IAuthBusinessLogic _businessLogic;
-        public AuthController(IAuthBusinessLogic businessLogic)
+        protected readonly ILogger _logger;
+        public AuthController(IAuthBusinessLogic businessLogic, ILogger logger)
         {
             this._businessLogic = businessLogic;
+            this._logger = logger;
         }
 
         [HttpPost("token")]
