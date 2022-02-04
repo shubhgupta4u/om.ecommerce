@@ -81,5 +81,7 @@ Thumbs.db
 
 
 #user secret Files
-auth*.json
-log*.json
+authsettings.json
+logsettings.AzureBlobStorage.json
+logsettings.json
+authConfig.json

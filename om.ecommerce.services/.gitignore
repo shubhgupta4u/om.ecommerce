@@ -33,6 +33,8 @@ msbuild.wrn
 # Visual Studio 2015
 .vs/
 
-#user secret Files
-auth*.json
-log*.json
+# user secret Files
+authsettings.json
+logsettings.AzureBlobStorage.json
+logsettings.json
+authConfig.json
