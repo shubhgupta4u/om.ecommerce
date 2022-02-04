@@ -78,3 +78,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+
+#user secret Files
+auth*.json
+log*.json
