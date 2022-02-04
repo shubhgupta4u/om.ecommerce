@@ -1,0 +1,19 @@
+﻿{
+  "JwtSetting": {
+    "AllowedOrigins": [ "http://localhost:4200" ],
+    "SecurityKey": "Thisismysecretkey",
+    "Scope": "om.ecommerce",
+    "ExpireTime": 30,
+    "PreviousTokenValidDuration": 2
+  },
+  "OktaSetting": {
+    "OpenIdMetadataAddress": "https://dev-35555547.okta.com/oauth2/default/.well-known/oauth-authorization-server",
+    "OktaDomain": "dev-35555547.okta.com"
+  },
+  "AzureAdSetting": {
+    "TenantId": "", //TenantId of Azure Active Directory
+    "Audience": "api://77480444-3d6d-491b-8fa1-2c8a6911636b",
+    "Issuer": "https://sts.windows.net/<TenantId>/",
+    "SecretKey": "" //Client Secret Key of registered app inside Azure Active Directory
+  }
+}

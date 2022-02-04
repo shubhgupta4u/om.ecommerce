@@ -15,9 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\om.shared.api.middlewares\om.shared.api.middlewares.csproj" />
-    <ProjectReference Include="..\..\..\Shared\om.shared.logger\om.shared.logger.csproj" />
-    <ProjectReference Include="..\..\..\Shared\om.shared.security\om.shared.security.csproj" />
+    <ProjectReference Include="..\..\..\Shared\om.shared.api.common\om.shared.api.common.csproj" />
     <ProjectReference Include="..\om.security.businesslogic\om.security.businesslogic.csproj" />
     <ProjectReference Include="..\om.security.models\om.security.models.csproj" />
   </ItemGroup>

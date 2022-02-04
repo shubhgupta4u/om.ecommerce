@@ -1,0 +1,26 @@
+{
+    "authProvider":1, 
+    "nativeAuthApiConfig":
+    {
+      "loginUri":"https://localhost:44386/api/Auth/token",
+      "logoutUri":"https://localhost:44386/api/Auth/logout",
+      "refreshUri":"https://localhost:44386/api/Auth/refresh",
+      "loginRedirectRoute":"product",
+      "logoutRedirectRoute":"account",
+      "authScope":"om.ecommerce"
+    },
+    "oktaAuthConfig":
+    {
+      "clientId":"",
+      "issuer":"https://dev-35555547.okta.com/oauth2/default",
+      "logoutRedirectUri":"http://localhost:4200/account/logout/callback",
+      "loginRedirectUri":"http://localhost:4200/account/login/callback"
+    },
+    "azureAdAuthConfig":{
+      "clientId":"77480444-3d6d-491b-8fa1-2c8a6911636b",
+      "tenantId":"",
+      "scopes":["api://77480444-3d6d-491b-8fa1-2c8a6911636b/Files.Read"],
+      "loginRedirectUri":"http://localhost:4200/account/login",
+      "logoutRedirectUri":"http://localhost:4200/account/logout/callback"
+    }
+  }

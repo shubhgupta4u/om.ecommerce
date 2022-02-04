@@ -21,13 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="logsettings.ApplicationInsight.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="logsettings.AzureBlobStorage.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="logsettings.File.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="logsettings.MongoDb.json">

@@ -1,26 +1,25 @@
 ﻿
 using Microsoft.AspNetCore.Http;
 using om.shared.logger.Interfaces;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using System.Linq;
 using System.Collections.Generic;
-using om.shared.logger;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace om.shared.api.middlewares
 {
     public class LogContextEnrichment
     {
         private readonly RequestDelegate next;
-
-        public LogContextEnrichment(RequestDelegate next)
+        private readonly ILogger _logger;
+        public LogContextEnrichment(RequestDelegate next, ILogger logger)
         {
             this.next = next;
+            this._logger = logger;
         }
 
-        public async Task Invoke(HttpContext context, ILogger logger)
+        public async Task Invoke(HttpContext context)
         {
-            logger.ResetContext();
+            this._logger.ResetContext();
             var properties = new List<KeyValuePair<string, string>>();
             if (context != null)
             {
@@ -42,7 +41,7 @@ namespace om.shared.api.middlewares
             }
             foreach (var property in properties)
             {
-                logger.SetContext(property.Key, property.Value);
+                this._logger.SetContext(property.Key, property.Value);
             }
             await next(context);
 
