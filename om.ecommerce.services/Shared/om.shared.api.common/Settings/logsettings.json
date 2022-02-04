@@ -1,4 +1,4 @@
 {
   "Sink": "File",
-  "AppInsightInstrumentationKey": "0599aa20-a5ba-4a94-b3a8-fba4726621c4" //InstrumentationKey of Application Key
+  "AppInsightInstrumentationKey": "" //InstrumentationKey of Application Key
 }
