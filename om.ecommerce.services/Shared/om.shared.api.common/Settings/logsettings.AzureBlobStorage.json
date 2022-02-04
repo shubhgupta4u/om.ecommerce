@@ -13,7 +13,7 @@
       {
         "Name": "AzureBlobStorage",
         "Args": {
-          "connectionString": "DefaultEndpointsProtocol=https;AccountName=demoshubh;AccountKey=5zjWT1OILSbAlun4UJ5YYFP6Z23qDXu1Q+WwQ4GOBGlR9OvjO+b46Vd3qqei9/SU2hE3Vjnk4K+/61kGgUUQzQ==;EndpointSuffix=core.windows.net",
+          "connectionString": "DefaultEndpointsProtocol=https;AccountName=demoshubh;AccountKey=<AccountKey>;EndpointSuffix=core.windows.net",
           "storageContainerName": "om-ecommerce",
           "storageFileName": "{ApplicationName}\\log.txt",
           "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] --Application {Application} --Host {Host}, --Path {Path}, --Method {Method}, --ResponseCode {ResponseCode}, --RequestTime {RequestTime}, --User {UserName}, --UserId {UserId}, --ClientIp {ClientIp}, --UserAgent {UserAgent}, --CorrelationId {CorrelationId}, --AssemblyName {AssemblyName}, --AssemblyVersion {AssemblyVersion}, --MachineName {MachineName}, --ProcessName {ProcessName}, --ProcessId {ProcessId}, --ThreadId {ThreadId}, --MemoryUsage {MemoryUsage}{NewLine}{Message:lj}{NewLine}{NewLine}",
