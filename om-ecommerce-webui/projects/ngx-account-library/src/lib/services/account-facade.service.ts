@@ -68,8 +68,8 @@ export class AccountFacadeService {
 
     if (config != null) {
       this._accountModuleConfig = config;
-
-      if (this._accountModuleConfig.authProvider == AuthProvider.AzureAD) {
+      var authstartedItem = sessionStorage.getItem("authstarted");
+      if (authstartedItem && authstartedItem == "Msal") {        
         if (this.msalAuthService.isAuthenticated()) {
           this.handleMsalAuthentication();
         } else {
@@ -150,6 +150,7 @@ export class AccountFacadeService {
 
   }
   handleMsalAuthentication() {
+    sessionStorage.removeItem("authstarted");
     return new Promise<boolean>((resolve, reject) => {
       var accessToken = this.msalAuthService.getAccessToken();
       if (accessToken) {

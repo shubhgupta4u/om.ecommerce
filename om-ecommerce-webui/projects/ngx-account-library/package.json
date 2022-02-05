@@ -7,7 +7,8 @@
     "jwt-decode": "^3.1.2",
     "@azure/msal-angular": "^2.1.0",
     "@azure/msal-browser": "^2.21.0",
-    "@okta/okta-auth-js": "^6.0.0"
+    "@okta/okta-auth-js": "^6.0.0",
+    "ngx-bootstrap": "^8.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

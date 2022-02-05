@@ -65,7 +65,7 @@ export class MsalAuthService {
     return null;
   }
   async checkAndFetachAuthenticationResult(){
-    let authResult:AuthenticationResult|null = await this.authService.instance.handleRedirectPromise();
+    let authResult:AuthenticationResult|null = await this.authService.instance.handleRedirectPromise();    
     return authResult;    
   }
   login() {

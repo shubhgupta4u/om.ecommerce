@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountFacadeService } from 'ngx-account-library';
 import { TokenResponse } from 'projects/ngx-account-library/src/public-api';
+import { setTheme } from 'ngx-bootstrap/utils';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ export class AppComponent  implements OnInit {
   isLogin:boolean=false;
 
   constructor(private readonly accountService:AccountFacadeService){
-
+    setTheme('bs5');
   }
 
   ngOnInit() {    

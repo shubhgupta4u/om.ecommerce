@@ -11,7 +11,7 @@ import { MsalService } from '@azure/msal-angular';
 @Component({
   selector: 'lib-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
 
@@ -30,9 +30,10 @@ export class LoginComponent implements OnInit {
     private readonly config: AccountModuleConfig | null,
     private accountService: AccountFacadeService
   ) {
-
-    if (this.router.url.indexOf("login/callback") >= 0 && config?.authProvider == AuthProvider.Okta) {
+    var authstartedItem = sessionStorage.getItem("authstarted");
+    if (authstartedItem && authstartedItem == "Okta") {
       this.loading = true;
+      sessionStorage.removeItem("authstarted");
       this.accountService.handleOktaAuthentication().then((isAuthenticated) => {
         console.log("Successfully login using Okta credential")
       }, error => {
@@ -52,42 +53,37 @@ export class LoginComponent implements OnInit {
   async ngOnInit() {
     if (this._accountModuleConfig && this._accountModuleConfig.authProvider == AuthProvider.NativeWebForm) {
       this.form = this.formBuilder.group({
-        username: ['', Validators.required],
-        password: ['', Validators.required]
+        username: [null, Validators.required],
+        password: [null, Validators.required]
       });
     }
-    // else if (this._accountModuleConfig && this._accountModuleConfig.authProvider == AuthProvider.AzureAD) {
-     
-
-    //   var authResult = await this.authService.instance.handleRedirectPromise();
-    //   console.log(authResult);
-    // }
   }
 
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
 
-  onSubmit() {
-    if (this._accountModuleConfig && this._accountModuleConfig.authProvider == AuthProvider.NativeWebForm) {
+  onSubmit(authProvider:number) {
+    this.loading = true;
+    if (this._accountModuleConfig && authProvider == AuthProvider.NativeWebForm) {
       this.loginNativeWebForm();
     }
-    else if (this._accountModuleConfig && this._accountModuleConfig.authProvider == AuthProvider.Okta) {
+    else if (this._accountModuleConfig && authProvider == AuthProvider.Okta) {
       this.loginOkta();
     }
-    else if (this._accountModuleConfig && this._accountModuleConfig.authProvider == AuthProvider.AzureAD) {
+    else if (this._accountModuleConfig && authProvider == AuthProvider.AzureAD) {
       this.loginMsal();
     }
   }
 
   loginNativeWebForm() {
     this.submitted = true;
-
+    sessionStorage.removeItem("authstarted");
     // stop here if form is invalid
     if (this.form.invalid) {
+      this.loading = false;
       return;
     }
     const returnUrl = this.route.snapshot.queryParams['returnUrl'];
-    this.loading = true;
     this.accountService.webFormlogin(this.f.username.value, this.f.password.value, returnUrl)
       .pipe(first())
       .subscribe({
@@ -105,18 +101,11 @@ export class LoginComponent implements OnInit {
   loginOkta() {
     const returnUrl = this.route.snapshot.queryParams['returnUrl'];
     this.accountService.oktaLogin(returnUrl);
+    sessionStorage.setItem("authstarted","Okta")
   }
 
   loginMsal() {
     this.accountService.msalLogin();
-    // if (this.msalGuardConfig.authRequest) {
-    //   this.authService.loginRedirect({ ...this.msalGuardConfig.authRequest } as RedirectRequest);
-    // } else {
-    //   this.authService.loginRedirect();
-    // }
-  }
-
-  logout() {
-    this.authService.logout();
+    sessionStorage.setItem("authstarted","Msal")
   }
 }
