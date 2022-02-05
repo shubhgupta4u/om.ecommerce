@@ -239,6 +239,37 @@
           }
         }
       }
+    },
+    "ngx-om-common-library": {
+      "projectType": "library",
+      "root": "projects/ngx-om-common-library",
+      "sourceRoot": "projects/ngx-om-common-library/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngx-om-common-library/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-om-common-library/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-om-common-library/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-om-common-library/src/test.ts",
+            "tsConfig": "projects/ngx-om-common-library/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-om-common-library/karma.conf.js"
+          }
+        }
+      }
     }
   },
   "defaultProject": "om-ecommerce-buyer-app"

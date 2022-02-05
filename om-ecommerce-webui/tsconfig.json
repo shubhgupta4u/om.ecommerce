@@ -17,6 +17,10 @@
       "ngx-account-library": [
         "dist/ngx-account-library/ngx-account-library",
         "dist/ngx-account-library"
+      ],
+      "ngx-om-common-library": [
+        "dist/ngx-om-common-library/ngx-om-common-library",
+        "dist/ngx-om-common-library"
       ]
     },
     "experimentalDecorators": true,

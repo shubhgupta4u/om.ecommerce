@@ -24,6 +24,7 @@
     "jwt-decode": "^3.1.2",
     "ngx-account-library": "file:dist/ngx-account-library",
     "ngx-bootstrap": "^8.0.0",
+    "ngx-om-common-library": "file:dist/ngx-om-common-library",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

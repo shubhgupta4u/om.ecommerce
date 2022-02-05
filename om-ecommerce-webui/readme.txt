@@ -12,6 +12,7 @@ Step to build angular multi-projects workspace
 	ng build om-ecommerce-buyer-app --configuration development
 	ng build om-ecommerce-admin-app --configuration development
 	ng build ngx-account-library --configuration development
+	ng build ngx-om-common-library --configuration development
 
 Step to run angular multi-projects workspace
 
@@ -22,9 +23,10 @@ Step to run angular multi-projects workspace
 Step to use angular library locally with Hot Module Reload
 
 	ng build ngx-account-library --watch
+	ng build ngx-om-common-library --watch
 	OneTime:
 	npm install file://E:\Repository\Github\om.ecommerce\om-ecommerce-webui\dist\ngx-account-library
-
+	npm install file://E:\Repository\Github\om.ecommerce\om-ecommerce-webui\dist\ngx-om-common-library
 
 Step to use builds and packages your code into a compressed file named using the name and version from your package.json
 
