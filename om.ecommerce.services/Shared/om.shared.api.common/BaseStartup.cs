@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using om.shared.api.common.Interfaces;
+using om.shared.api.common.Services;
 using om.shared.api.middlewares;
 using om.shared.api.middlewares.Filters;
 using om.shared.logger;
@@ -41,6 +43,7 @@ namespace om.shared.api.common
         #region om.shared.api.common.Interfaces.IStartup
         public virtual void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<ICryptoService, CryptoService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserTokenRepository, UserTokenRepository>();
             services.AddSingleton<om.shared.logger.Interfaces.ILogger, om.shared.logger.Logger>();

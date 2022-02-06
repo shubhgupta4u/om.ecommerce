@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AccountFacadeService } from 'ngx-account-library';
-import { TokenResponse } from 'projects/ngx-account-library/src/public-api';
+import { AccountFacadeService } from 'ngx-account-library'
 import { setTheme } from 'ngx-bootstrap/utils';
 
 @Component({

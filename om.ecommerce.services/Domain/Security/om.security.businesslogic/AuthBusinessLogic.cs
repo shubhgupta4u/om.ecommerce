@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using om.security.businesslogic.Interfaces;
 using om.security.models;
+using om.shared.api.common.Interfaces;
 using om.shared.security;
 using om.shared.security.Interfaces;
 using om.shared.security.models;
@@ -30,16 +31,18 @@ namespace om.security.businesslogic
         private bool disposedValue;
         private IUserTokenRepository _userTokenRepository;
         private readonly IAuthService authService;
-
+        private readonly ICryptoService cryptoService;
         public AuthBusinessLogic(IOptions<JwtSetting> jwtSetting, 
                                  IOptions<AccountApiEndPoints> accountApiEndPoints,
                                  IHttpClientFactory httpClientFactory,
                                  IUserTokenRepository userTokenRepository,
-                                 IAuthService authService)
+                                 IAuthService authService,
+                                 ICryptoService cryptoService)
         {
             this._httpClientFactory = httpClientFactory;
             this._userTokenRepository = userTokenRepository;
             this.authService = authService;
+            this.cryptoService = cryptoService;
             this._httpClient = _httpClientFactory.CreateClient();
             this._jwtSetting = jwtSetting.Value;
             this._accountApiEndPoints = accountApiEndPoints.Value;
@@ -49,7 +52,7 @@ namespace om.security.businesslogic
         {
             ValidateCredentialRequest validateCredRequest = new ValidateCredentialRequest
             {
-                Password = password,
+                Password = this.cryptoService.Decrypt(password),
                 UserName = userName
             };
             ValidateCredentialResponse response = null;

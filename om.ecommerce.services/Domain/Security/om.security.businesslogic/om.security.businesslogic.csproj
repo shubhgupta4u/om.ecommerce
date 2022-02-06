@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\om.shared.api.common\om.shared.api.common.csproj" />
     <ProjectReference Include="..\..\..\Shared\om.shared.security\om.shared.security.csproj" />
     <ProjectReference Include="..\om.security.models\om.security.models.csproj" />
   </ItemGroup>

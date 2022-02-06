@@ -8,6 +8,7 @@ import { ProductModule } from '../domain_modules/product/product.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import * as authconfigdata from './authConfig.json';
+import { NgxOmCommonLibraryModule } from 'ngx-om-common-library';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,10 @@ import * as authconfigdata from './authConfig.json';
     BrowserModule,
     AppRoutingModule,
     ProductModule,
-    NgxAccountLibraryModule.forRoot(authconfigdata)
+    NgxAccountLibraryModule.forRoot(authconfigdata),
+    NgxOmCommonLibraryModule.forRoot({
+      cryptoKey:"iluvdaughterpihu"
+    })
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }

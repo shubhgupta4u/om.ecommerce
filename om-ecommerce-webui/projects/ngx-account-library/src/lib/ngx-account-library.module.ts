@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 
 import { IPublicClientApplication, PublicClientApplication, Configuration } from '@azure/msal-browser';
 import { MsalGuard, MsalBroadcastService, MsalService, MSAL_INSTANCE } from '@azure/msal-angular';
+import { NgxOmCommonLibraryModule } from 'ngx-om-common-library';
 
 
 
@@ -39,7 +40,8 @@ export function MSALInstanceFactory(): IPublicClientApplication {
     CommonModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgxAccountLibraryRoutingModule
+    NgxAccountLibraryRoutingModule,
+    NgxOmCommonLibraryModule
   ],
   providers: [
     {

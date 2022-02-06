@@ -1,7 +1,7 @@
 import { Inject, Injectable, Injector, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, retry } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ACCOUNT_MODULE_CONFIG_TOKEN } from '../../public-api';
 import { AccountModuleConfig, AuthProvider } from '../interfaces/ngx-account-module-config';
 import { TokenRequest } from '../models/token-request';
@@ -11,7 +11,7 @@ import { LogoutService } from './logout.service';
 import jwt_decode from "jwt-decode";
 import { OktaAuthService } from './okta-auth.service';
 import { MsalAuthService } from './msal-auth.service';
-import { AuthenticationResult } from '@azure/msal-browser';
+import { CryptoService } from 'ngx-om-common-library';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +60,7 @@ export class AccountFacadeService {
     return this._oktaAuthService;
   }
 
-  constructor(private injector: Injector,
+  constructor(private injector: Injector, private cryptoService:CryptoService,
     private router: Router,
     @Optional() @Inject(ACCOUNT_MODULE_CONFIG_TOKEN)
     private readonly config: AccountModuleConfig | null
@@ -71,7 +71,7 @@ export class AccountFacadeService {
       var authstartedItem = sessionStorage.getItem("authstarted");
       if (authstartedItem && authstartedItem == "Msal") {        
         if (this.msalAuthService.isAuthenticated()) {
-          this.handleMsalAuthentication();
+          this.handleMsalAuthentication();  
         } else {
           this.msalAuthService.authenticationResult$.subscribe((authResult) => {
             if (authResult && authResult.accessToken) {
@@ -99,7 +99,7 @@ export class AccountFacadeService {
 
     var request = new TokenRequest();
     request.userName = username;
-    request.password = password;
+    request.password = this.cryptoService.encrypt(password);
     request.grantType = AuthProvider.NativeWebForm;
     return this.login(request, returnUrl);
   }
