@@ -12,7 +12,7 @@ export class ProductSearchComponent implements OnInit {
 
   ngOnInit(): void {
     const headers = { 'content-type': 'application/json'}  
-    this.http.get('https://localhost:44386/api/test/adminsecure',{'headers':headers}).subscribe((result)=>{
+    this.http.get('https://localhost:44369/security/api/v1/test/adminsecure',{'headers':headers}).subscribe((result)=>{
       console.log(result);
     }) 
   }

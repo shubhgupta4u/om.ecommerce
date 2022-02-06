@@ -3,10 +3,15 @@ using om.shared.security;
 
 namespace om.security.api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class TestController : ControllerBase
     {
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok("Success");
+        }
         [Authorize(Roles ="admin,user")]
         [HttpGet("secure")]
         public IActionResult Secure()
@@ -31,8 +36,7 @@ namespace om.security.api.Controllers
         [HttpGet("unsecure")]
         public IActionResult Unsecure()
         {
-            string userId = this.GetLoggedInUserId<string>();
-            return Ok(userId);
+            return Ok("Success");
         }
     }
 }
