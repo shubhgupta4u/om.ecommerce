@@ -6,7 +6,7 @@ import { AccountFacadeService } from '../../services/account-facade.service';
 import { AccountModuleConfig, AuthProvider } from '../../interfaces/ngx-account-module-config';
 import { ACCOUNT_MODULE_CONFIG_TOKEN } from '../../../public-api';
 import { MsalService } from '@azure/msal-angular';
-
+import { AlertNotifierService } from 'ngx-om-common-library';
 
 @Component({
   selector: 'lib-login',
@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authService: MsalService,
+    private alertService: AlertNotifierService,
     @Optional() @Inject(ACCOUNT_MODULE_CONFIG_TOKEN)
     private readonly config: AccountModuleConfig | null,
     private accountService: AccountFacadeService
@@ -92,8 +93,8 @@ export class LoginComponent implements OnInit {
         },
         error: error => {
           this.loading = false;
-          console.error("Error occured while logout")
           console.error(error);
+          this.alertService.error(error.error);
         }
       });
   }

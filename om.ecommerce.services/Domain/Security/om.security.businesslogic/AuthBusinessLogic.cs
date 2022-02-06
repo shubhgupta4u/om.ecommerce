@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using om.security.businesslogic.Interfaces;
 using om.security.models;
 using om.shared.api.common.Interfaces;
+using om.shared.caching.Interfaces;
+using om.shared.caching.Models;
 using om.shared.security;
 using om.shared.security.Interfaces;
 using om.shared.security.models;
@@ -193,7 +195,7 @@ namespace om.security.businesslogic
                                     CurrentToken = token 
                                 };                    
                 }
-                await this._userTokenRepository.WriteAsync(userToken);
+                await this._userTokenRepository.WriteAsync(userToken,this._jwtSetting.ExpireTime);
 
                 return refreshToken;
             }

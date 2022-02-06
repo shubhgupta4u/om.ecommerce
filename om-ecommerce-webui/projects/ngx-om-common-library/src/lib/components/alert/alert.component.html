@@ -1,1 +1,9 @@
-<p>alert works!</p>
+<div *ngIf="message"
+    [ngClass]="{ 'alert': message, 'alert-success': message.type === 'success', 'alert-danger': message.type === 'error' }">
+    {{message.text}}
+    <span class="pull-right">
+        <a (click)="close($event)" href="#">
+            <i class="fa fa-window-close" aria-hidden="true"></i>
+        </a>
+    </span>
+</div>

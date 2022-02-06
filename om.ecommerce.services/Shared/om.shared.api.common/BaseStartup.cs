@@ -8,6 +8,8 @@ using om.shared.api.common.Interfaces;
 using om.shared.api.common.Services;
 using om.shared.api.middlewares;
 using om.shared.api.middlewares.Filters;
+using om.shared.caching.Interfaces;
+using om.shared.dataaccesslayer;
 using om.shared.logger;
 using om.shared.logger.helpers;
 using om.shared.logger.models;
@@ -45,7 +47,7 @@ namespace om.shared.api.common
         {
             services.AddScoped<ICryptoService, CryptoService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IUserTokenRepository, UserTokenRepository>();
+            services.AddScoped<IMongoBookDBContext, MongoBookDBContext>();
             services.AddSingleton<om.shared.logger.Interfaces.ILogger, om.shared.logger.Logger>();
 
             var appInsightInstrumentationKey = this.LogSettingConfigs.GetSection("AppInsightInstrumentationKey");
@@ -53,7 +55,6 @@ namespace om.shared.api.common
             {
                 services.AddApplicationInsightsTelemetry(appInsightInstrumentationKey.Value);
             }
-
 
             var redisEndPoint = AppSettingConfigs.GetSection("RedisEndPoint").Value;
             services.AddStackExchangeRedisCache(options =>
@@ -112,6 +113,11 @@ namespace om.shared.api.common
                        option.Filters.Add<ExceptionFilter>();
                    }
                );
+            services.Configure<Mongosettings>(options =>
+            {
+                options.Connection = AppSettingConfigs.GetSection("Mongosettings:Connection").Value;
+                options.DatabaseName = AppSettingConfigs.GetSection("Mongosettings:DatabaseName").Value;
+            });
         }
         public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

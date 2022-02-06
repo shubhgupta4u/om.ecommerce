@@ -1,21 +1,22 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { AlertComponent } from './components/alert/alert.component';
-import { ValidationMessageComponent } from './components/validation-message/validation-message.component';
 import { CommonSetting } from './interfaces/setting';
 import { Common_Setting_TOKEN } from '../public-api';
-
+import { SafeHtmlPipe } from './pipes/safe-html.pipe';
+import { CommonModule } from '@angular/common';
 
 
 @NgModule({
   declarations: [
     AlertComponent,
-    ValidationMessageComponent
+    SafeHtmlPipe
   ],
   imports: [
+    CommonModule
   ],
   exports: [
     AlertComponent,
-    ValidationMessageComponent
+    SafeHtmlPipe
   ]
 })
 export class NgxOmCommonLibraryModule {

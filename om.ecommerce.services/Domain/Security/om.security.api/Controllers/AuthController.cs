@@ -38,7 +38,7 @@ namespace om.security.api.Controllers
 
             if (validateCredResponse == null || validateCredResponse.ErrorCode != 0)
             {
-                return Unauthorized();
+                return Unauthorized("You have entered an invalid username or password.");
             }
             TokenResponse response = await this._businessLogic.GenerateTokenAsync(validateCredResponse, this.GetRemoteIpAddress()); ;
             return Ok(response);
@@ -51,7 +51,7 @@ namespace om.security.api.Controllers
             {
                 return Ok(response);                
             }
-            return Unauthorized();
+            return Unauthorized("You have provided an invalid bearer jwt or refresh tokens.");
         }
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()

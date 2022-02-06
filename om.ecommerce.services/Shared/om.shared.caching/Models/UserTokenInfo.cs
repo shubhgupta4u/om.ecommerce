@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace om.shared.security.models
+namespace om.shared.caching.Models
 {
     public class UserTokenInfo
     {

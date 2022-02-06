@@ -11,8 +11,6 @@ namespace om.ecommerce.security.api
 {
     public class Startup: BaseStartup
     {
-        private readonly om.shared.api.common.BaseStartup startup;
-
         public Startup(IConfiguration configuration):base(configuration)
         {
         }
@@ -20,8 +18,10 @@ namespace om.ecommerce.security.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public override void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<om.shared.caching.Interfaces.IUserTokenRepository, om.shared.caching.Repository.UserTokenRepository>();
             base.ConfigureServices(services);
             services.AddScoped<IAuthBusinessLogic, AuthBusinessLogic>();
+
             services.Configure<AccountApiEndPoints>(this.AppSettingConfigs.GetSection("AccountApiEndPoints"));
         }
 

@@ -13,4 +13,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\om.shared.api.common\om.shared.api.common.csproj" />
+  </ItemGroup>
+
 </Project>

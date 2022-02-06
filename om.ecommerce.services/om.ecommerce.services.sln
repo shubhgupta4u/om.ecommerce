@@ -77,11 +77,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.security.models", "Domai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.shared.security", "Shared\om.shared.security\om.shared.security.csproj", "{B8ABDD9C-C093-4FEA-A5C9-1C70CF24B9F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.shared.logger", "Shared\om.shared.logger\om.shared.logger.csproj", "{B37D06D1-95FE-47A7-B20E-C4DCB4746C27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.shared.logger", "Shared\om.shared.logger\om.shared.logger.csproj", "{B37D06D1-95FE-47A7-B20E-C4DCB4746C27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.shared.api.middlewares", "Shared\om.shared.api.middlewares\om.shared.api.middlewares.csproj", "{84DB8324-3739-4CC9-999A-0B4017F0F6E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.shared.api.middlewares", "Shared\om.shared.api.middlewares\om.shared.api.middlewares.csproj", "{84DB8324-3739-4CC9-999A-0B4017F0F6E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.shared.api.common", "Shared\om.shared.api.common\om.shared.api.common.csproj", "{3DF2BC51-95F2-4C7C-845E-B746ABA5C7F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.shared.api.common", "Shared\om.shared.api.common\om.shared.api.common.csproj", "{3DF2BC51-95F2-4C7C-845E-B746ABA5C7F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.shared.caching", "Shared\om.shared.caching\om.shared.caching.csproj", "{E19CE6C3-9657-411A-B5C4-B06B04C09EF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -185,6 +187,10 @@ Global
 		{3DF2BC51-95F2-4C7C-845E-B746ABA5C7F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DF2BC51-95F2-4C7C-845E-B746ABA5C7F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DF2BC51-95F2-4C7C-845E-B746ABA5C7F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E19CE6C3-9657-411A-B5C4-B06B04C09EF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E19CE6C3-9657-411A-B5C4-B06B04C09EF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E19CE6C3-9657-411A-B5C4-B06B04C09EF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E19CE6C3-9657-411A-B5C4-B06B04C09EF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -226,6 +232,7 @@ Global
 		{B37D06D1-95FE-47A7-B20E-C4DCB4746C27} = {4275C992-C388-42D1-B36E-E3D655913DCA}
 		{84DB8324-3739-4CC9-999A-0B4017F0F6E0} = {4275C992-C388-42D1-B36E-E3D655913DCA}
 		{3DF2BC51-95F2-4C7C-845E-B746ABA5C7F6} = {4275C992-C388-42D1-B36E-E3D655913DCA}
+		{E19CE6C3-9657-411A-B5C4-B06B04C09EF9} = {4275C992-C388-42D1-B36E-E3D655913DCA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8358D226-D15C-4081-AC0C-003980DB3AA7}
