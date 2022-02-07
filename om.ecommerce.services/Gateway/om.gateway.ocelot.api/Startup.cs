@@ -4,16 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Ocelot.Provider.Consul;
 using Ocelot.Provider.Polly;
-using System;
 using System.IO;
-using System.Net;
 
 namespace om.gateway.ocelot.api
 {
@@ -37,7 +31,6 @@ namespace om.gateway.ocelot.api
             services
                 .AddOcelot(this.ocelotConfigs)
                 .AddPolly();
-                //.AddConsul();
 
             services.AddControllers();
             string[] allowedOrigins = this.Configuration.GetSection("AllowedOrigins").Get<string[]>();
@@ -59,10 +52,6 @@ namespace om.gateway.ocelot.api
                                         .AllowCredentials();
                                   });
                 }
-            });
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ocelot", Version = "v1" });
             });
         }
 
