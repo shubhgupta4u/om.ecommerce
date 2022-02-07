@@ -26,7 +26,6 @@
         "DurationOfBreak": 10,
         "TimeoutValue": 1800000
       },
-      "ServiceName": "security",
       "SwaggerKey": "security",
       "UpstreamHeaderTransform": {
         "X-Forwarded-For": "{RemoteIpAddress}"
@@ -58,7 +57,6 @@
         "DurationOfBreak": 10,
         "TimeoutValue": 1800000
       },
-      "ServiceName": "account",
       "SwaggerKey": "account",
       "UpstreamHeaderTransform": {
         "X-Forwarded-For": "{RemoteIpAddress}"
@@ -72,7 +70,7 @@
         {
           "Name": "Security API",
           "Version": "v1",
-          "Url": "http://localhost:44386/swagger/v1/swagger.json"
+          "Url": "https://localhost:44386/swagger/v1/swagger.json"
         }
       ]
     },
@@ -82,7 +80,7 @@
         {
           "Name": "Account API",
           "Version": "v1",
-          "Url": "http://localhost:44353/swagger/v1/swagger.json"
+          "Url": "https://localhost:44353/swagger/v1/swagger.json"
         }
       ]
     }
@@ -90,11 +88,6 @@
   "GlobalConfiguration": {
     "RequestIdKey": "OcRequestId",
     "BaseUrl": "https://localhost:44369",
-    "ServiceDiscoveryProvider": {
-      "Host": "localhost",
-      "Port": 8500,
-      "Type": "Consul"
-    },
     "LoadBalancerOptions": {
       "Type": "LeastConnection",
       "Key": null,

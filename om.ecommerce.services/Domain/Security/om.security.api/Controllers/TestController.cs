@@ -17,7 +17,7 @@ namespace om.security.api.Controllers
         public IActionResult Secure()
         {
             string userId = this.GetLoggedInUserId<string>();
-            return Ok(User);
+            return Ok(userId);
         }
         [Authorize(Roles = "admin")]
         [HttpGet("adminsecure")]

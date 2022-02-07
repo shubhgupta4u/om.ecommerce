@@ -83,11 +83,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.shared.api.middlewares",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.shared.api.common", "Shared\om.shared.api.common\om.shared.api.common.csproj", "{3DF2BC51-95F2-4C7C-845E-B746ABA5C7F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.shared.caching", "Shared\om.shared.caching\om.shared.caching.csproj", "{E19CE6C3-9657-411A-B5C4-B06B04C09EF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.shared.caching", "Shared\om.shared.caching\om.shared.caching.csproj", "{E19CE6C3-9657-411A-B5C4-B06B04C09EF9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{3F31A367-938D-4A81-96A7-99611FA7FF4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "om.gateway.ocelot.api", "Gateway\om.gateway.ocelot.api\om.gateway.ocelot.api.csproj", "{BA9A83B9-D6F4-4463-8042-1D9F7EFD9776}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "om.gateway.ocelot.api", "Gateway\om.gateway.ocelot.api\om.gateway.ocelot.api.csproj", "{BA9A83B9-D6F4-4463-8042-1D9F7EFD9776}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2E7643C5-52A2-4759-8E5D-DCFF5A96FB1C}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yaml = docker-compose.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

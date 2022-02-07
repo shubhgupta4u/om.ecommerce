@@ -4,12 +4,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Provider.Consul;
 using Ocelot.Provider.Polly;
+using System;
+using System.IO;
+using System.Net;
 
 namespace om.gateway.ocelot.api
 {
@@ -29,14 +33,13 @@ namespace om.gateway.ocelot.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            System.Threading.Tasks.Task.Delay(1000 * 5).Wait();
+            services.AddSwaggerForOcelot(this.ocelotConfigs);
             services
                 .AddOcelot(this.ocelotConfigs)
-                .AddPolly()
-                .AddConsul();
+                .AddPolly();
+                //.AddConsul();
 
             services.AddControllers();
-            services.AddSwaggerForOcelot(ocelotConfigs);
             string[] allowedOrigins = this.Configuration.GetSection("AllowedOrigins").Get<string[]>();
             services.AddCors(options =>
             {
@@ -57,6 +60,10 @@ namespace om.gateway.ocelot.api
                                   });
                 }
             });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ocelot", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,9 +72,7 @@ namespace om.gateway.ocelot.api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-            app.UseSwagger();
-            app.UseSwaggerForOcelotUI();
+            }           
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -79,21 +84,17 @@ namespace om.gateway.ocelot.api
             {
                 app.UseCors(ALLOW_SPECIFIC_ORIGINS);
             }
-            
-            app.UseOcelot().Wait();
-            
+
+            app.UseSwaggerForOcelotUI(opt => {
+                opt.PathToSwaggerGenerator = "/swagger/docs";
+            }).UseOcelot().Wait();
+
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
                 endpoints.MapGet("/", async context => {
                     await context.Response.WriteAsync("Hello World!");
                 });
             });
-        }
-        public string AlterUpstreamSwaggerJson(HttpContext context, string swaggerJson)
-        {
-            var swagger = JObject.Parse(swaggerJson);
-            // ... alter upstream json
-            return swagger.ToString(Formatting.Indented);
         }
     }
 
