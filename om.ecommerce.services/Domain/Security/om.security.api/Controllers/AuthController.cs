@@ -2,7 +2,7 @@
 using om.security.businesslogic.Interfaces;
 using om.security.models;
 using om.shared.logger.Interfaces;
-using om.shared.security;
+using om.shared.api.common.Extensions;
 using System.Threading.Tasks;
 
 namespace om.security.api.Controllers

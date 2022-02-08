@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\om.shared.api.common\om.shared.api.common.csproj" />
+    <ProjectReference Include="..\..\..\Shared\om.shared.signalr\om.shared.signalr.csproj" />
   </ItemGroup>
 
 </Project>

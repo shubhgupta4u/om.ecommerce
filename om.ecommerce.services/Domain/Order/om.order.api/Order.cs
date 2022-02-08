@@ -2,7 +2,7 @@ using System;
 
 namespace om.ecommerce.order.api
 {
-    public class WeatherForecast
+    public class Order
     {
         public DateTime Date { get; set; }
 

@@ -2,7 +2,7 @@
 using System;
 using System.Security.Claims;
 
-namespace om.shared.security
+namespace om.shared.api.common.Extensions
 {
     public static class ControllerBaseExtensions
     {

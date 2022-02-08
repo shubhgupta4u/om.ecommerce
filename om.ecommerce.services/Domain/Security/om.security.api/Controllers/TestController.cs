@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using om.shared.api.common.Extensions;
 using om.shared.security;
 
 namespace om.security.api.Controllers

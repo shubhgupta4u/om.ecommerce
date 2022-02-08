@@ -73,7 +73,7 @@ namespace om.gateway.ocelot.api
             {
                 app.UseCors(ALLOW_SPECIFIC_ORIGINS);
             }
-
+            app.UseWebSockets();
             app.UseSwaggerForOcelotUI(opt => {
                 opt.PathToSwaggerGenerator = "/swagger/docs";
             }).UseOcelot().Wait();
@@ -81,7 +81,7 @@ namespace om.gateway.ocelot.api
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
                 endpoints.MapGet("/", async context => {
-                    await context.Response.WriteAsync("Hello World!");
+                    await context.Response.WriteAsync("Ocelot Gateway Api is up and running...");
                 });
             });
         }

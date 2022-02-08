@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using om.security.businesslogic.Interfaces;
@@ -7,7 +6,6 @@ using om.security.models;
 using om.shared.api.common.Interfaces;
 using om.shared.caching.Interfaces;
 using om.shared.caching.Models;
-using om.shared.security;
 using om.shared.security.Interfaces;
 using om.shared.security.models;
 using System;
@@ -17,7 +15,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
@@ -77,7 +74,7 @@ namespace om.security.businesslogic
             if ((grantType == GrantType.Okta && this.authService.ValidateOktaToken(bearer_token, out email))
                 || (grantType == GrantType.AzureAD && this.authService.ValidateMsalToken(bearer_token, out email)))
             {
-                string access_token = await this.GenerateTempTokenAsync(email);
+                string access_token = await this.authService.GenerateApiServiceTokenAsync(email, DateTime.Now.AddMinutes(this._jwtSetting.ExpireTime));
                 this._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
                 var httpResponseMessage = await this._httpClient.GetAsync(string.Format("{0}?email={1}",this._accountApiEndPoints.FetchUserByEmail,email));
                 if (httpResponseMessage.IsSuccessStatusCode)
@@ -122,7 +119,7 @@ namespace om.security.businesslogic
             }           
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var finalToken = tokenHandler.WriteToken(token);
-            response.RefreshToken = await this.GenerateRefreshTokenAsync(validateCredResponse.User.UserId, finalToken, remoteIpAddress); 
+            response.RefreshToken = await this.authService.GenerateRefreshTokenAsync(validateCredResponse.User.UserId, finalToken, remoteIpAddress); 
             response.JwtToken = finalToken;
             return response;
         }
@@ -161,69 +158,9 @@ namespace om.security.businesslogic
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var finalToken = tokenHandler.WriteToken(token);
-            response.RefreshToken = await this.GenerateRefreshTokenAsync(userId, finalToken, remoteIpAddress);
+            response.RefreshToken = await this.authService.GenerateRefreshTokenAsync(userId, finalToken, remoteIpAddress);
             response.JwtToken = finalToken;
             return response;
-        }
-        private async Task<string> GenerateRefreshTokenAsync(string userId,string token, string remoteIpAddress)
-        {
-            var randomNumber = new byte[32];
-            using(var randomNumberGenerator = RandomNumberGenerator.Create())
-            {
-                randomNumberGenerator.GetBytes(randomNumber);
-                string refreshToken = Convert.ToBase64String(randomNumber);
-
-                UserTokenInfo userToken = await this._userTokenRepository.GetAsync(userId);
-                if (userToken != null)
-                {
-                    userToken.PreviousToken = userToken.CurrentToken;
-                    userToken.IsActive = true;
-                    userToken.CurrentToken = token;
-                    userToken.RefreshToken = refreshToken;
-                    userToken.ModifiedDate = DateTimeOffset.UtcNow;
-                }
-                else
-                {
-                    userToken = new UserTokenInfo 
-                                { 
-                                    IsActive = true, 
-                                    TokenId = new Random().Next().ToString(), 
-                                    UserId = userId, 
-                                    RefreshToken = refreshToken , 
-                                    RemoteIpAddress = remoteIpAddress,
-                                    ModifiedDate = DateTimeOffset.UtcNow,
-                                    CurrentToken = token 
-                                };                    
-                }
-                await this._userTokenRepository.WriteAsync(userToken,this._jwtSetting.ExpireTime);
-
-                return refreshToken;
-            }
-        }
-
-        private async Task<string> GenerateTempTokenAsync(string email)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenKey = Encoding.UTF8.GetBytes(this._jwtSetting.SecurityKey);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new System.Security.Claims.ClaimsIdentity
-                    (
-                        new Claim[]
-                        {
-                            new Claim(ClaimTypes.Name,email),
-                            new Claim(ClaimTypes.NameIdentifier,email),
-                            new Claim(ClaimTypes.Email,email)
-                        }
-                    ),
-                NotBefore = DateTime.Now,
-                Expires = DateTime.Now.AddMinutes(this._jwtSetting.ExpireTime),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var finalToken = tokenHandler.WriteToken(token);
-            await this.GenerateRefreshTokenAsync(email, finalToken, string.Empty);
-            return finalToken;
         }
         #region IDisposable
         protected virtual void Dispose(bool disposing)

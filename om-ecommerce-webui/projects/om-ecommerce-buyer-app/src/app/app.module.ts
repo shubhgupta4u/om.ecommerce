@@ -20,7 +20,8 @@ import { NgxOmCommonLibraryModule } from 'ngx-om-common-library';
     ProductModule,
     NgxAccountLibraryModule.forRoot(authconfigdata),
     NgxOmCommonLibraryModule.forRoot({
-      cryptoKey:"iluvdaughterpihu"
+      cryptoKey:"iluvdaughterpihu",
+      signalrUrl:"https://localhost:44369/signalr/hub"
     })
   ],
   providers: [

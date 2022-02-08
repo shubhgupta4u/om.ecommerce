@@ -8,7 +8,6 @@ using om.shared.api.common.Interfaces;
 using om.shared.api.common.Services;
 using om.shared.api.middlewares;
 using om.shared.api.middlewares.Filters;
-using om.shared.caching.Interfaces;
 using om.shared.dataaccesslayer;
 using om.shared.logger;
 using om.shared.logger.helpers;
@@ -16,9 +15,7 @@ using om.shared.logger.models;
 using om.shared.security;
 using om.shared.security.Interfaces;
 using om.shared.security.models;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 
 namespace om.shared.api.common
@@ -35,14 +32,17 @@ namespace om.shared.api.common
             this.Version = this.GetApplicationVersion();
             this.AuthSettingConfigs = new ConfigurationBuilder().AddJsonFile(System.IO.Path.Combine("Settings","authsettings.json")).Build();
             this.LogSettingConfigs = new ConfigurationBuilder().AddJsonFile(System.IO.Path.Combine("Settings", "logsettings.json")).Build();
+            this.SignalRSettingConfigs = new ConfigurationBuilder().AddJsonFile(System.IO.Path.Combine("Settings", "signalrsettings.json")).Build();            
         }
 
         #region
         public IConfiguration AppSettingConfigs { get; }
         public IConfiguration AuthSettingConfigs { get; }
         public IConfiguration LogSettingConfigs { get; }
+        public IConfiguration SignalRSettingConfigs { get; }
         public string ApplicationName { get; }
         public string Version { get; }
+        public IAuthService AuthService { get; private set; }
         #endregion
 
         #region om.shared.api.common.Interfaces.IStartup
@@ -78,9 +78,9 @@ namespace om.shared.api.common
             services.Configure<AzureAdSetting>(this.AuthSettingConfigs.GetSection("AzureAdSetting"));
             services.Configure<JwtSetting>(this.AuthSettingConfigs.GetSection("JwtSetting"));
 
-            IAuthService authService = services.BuildServiceProvider(false).GetRequiredService<IAuthService>();
-            authService.RegisterAuthentication(services);
-            AuthorizeAttribute.RegisterAuthService(authService);
+            this.AuthService = services.BuildServiceProvider(false).GetRequiredService<IAuthService>();
+            this.AuthService.RegisterAuthentication(services);
+            AuthorizeAttribute.RegisterAuthService(this.AuthService);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -175,12 +175,7 @@ namespace om.shared.api.common
             }
 
             app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseAuthorization();            
         }
         #endregion
 

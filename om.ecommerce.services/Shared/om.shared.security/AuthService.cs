@@ -14,7 +14,9 @@ using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace om.shared.security
 {
@@ -37,7 +39,6 @@ namespace om.shared.security
                 this._azureAdSetting = azureAdSetting.Value;
             }
         }
-
         public void RegisterAuthentication(IServiceCollection service)
         {
             service.AddAuthentication(item =>
@@ -187,7 +188,7 @@ namespace om.shared.security
             {
                 claims = null;
             }
-            catch
+            catch (Exception ex)
             {
                 claims = null;
             }
@@ -225,7 +226,7 @@ namespace om.shared.security
 
             return isValid;
         }
-        private TokenValidationParameters GetTokenValidationParameters()
+        public TokenValidationParameters GetTokenValidationParameters()
         {
             var tokenKey = Encoding.ASCII.GetBytes(this._jwtSetting.SecurityKey);
             return new TokenValidationParameters
@@ -237,6 +238,67 @@ namespace om.shared.security
                 // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
                 ClockSkew = TimeSpan.Zero
             };
+        }
+
+        public async Task<string> GenerateRefreshTokenAsync(string userId, string token, string remoteIpAddress)
+        {
+            var randomNumber = new byte[32];
+            using (var randomNumberGenerator = RandomNumberGenerator.Create())
+            {
+                randomNumberGenerator.GetBytes(randomNumber);
+                string refreshToken = Convert.ToBase64String(randomNumber);
+
+                UserTokenInfo userToken = await this._userTokenRepository.GetAsync(userId);
+                if (userToken != null)
+                {
+                    userToken.PreviousToken = userToken.CurrentToken;
+                    userToken.IsActive = true;
+                    userToken.CurrentToken = token;
+                    userToken.RefreshToken = refreshToken;
+                    userToken.ModifiedDate = DateTimeOffset.UtcNow;
+                }
+                else
+                {
+                    userToken = new UserTokenInfo
+                    {
+                        IsActive = true,
+                        TokenId = new Random().Next().ToString(),
+                        UserId = userId,
+                        RefreshToken = refreshToken,
+                        RemoteIpAddress = remoteIpAddress,
+                        ModifiedDate = DateTimeOffset.UtcNow,
+                        CurrentToken = token
+                    };
+                }
+                await this._userTokenRepository.WriteAsync(userToken, this._jwtSetting.ExpireTime);
+
+                return refreshToken;
+            }
+        }
+
+        public async Task<string> GenerateApiServiceTokenAsync(string idenetifier, DateTime tokenExpiry)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenKey = Encoding.UTF8.GetBytes(this._jwtSetting.SecurityKey);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new System.Security.Claims.ClaimsIdentity
+                    (
+                        new Claim[]
+                        {
+                            new Claim(ClaimTypes.Name,idenetifier),
+                            new Claim(ClaimTypes.NameIdentifier,idenetifier),
+                            new Claim(ClaimTypes.Email,idenetifier)
+                        }
+                    ),
+                NotBefore = DateTime.Now,
+                Expires = tokenExpiry,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var finalToken = tokenHandler.WriteToken(token);
+            await this.GenerateRefreshTokenAsync(idenetifier, finalToken, string.Empty);
+            return finalToken;
         }
     }
 }

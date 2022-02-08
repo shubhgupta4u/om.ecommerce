@@ -2,18 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>ddf96e49-2333-4ba8-b563-5acecd6564f5</UserSecretsId>
+    <UserSecretsId>a5bc5e8f-7fbd-4a37-ae43-cf61442b8903</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
-    <PackageReference Include="MMLib.SwaggerForOcelot" Version="4.8.0" />
-    <PackageReference Include="Ocelot" Version="17.0.1" />
-    <PackageReference Include="Ocelot.Provider.Polly" Version="17.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\om.shared.api.common\om.shared.api.common.csproj" />
   </ItemGroup>
 
 </Project>
